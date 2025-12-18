@@ -1,0 +1,11 @@
+{
+  "name": "PME Survey",
+  "short_name": "PME Survey",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#111111",
+  "theme_color": "#111111",
+  "description": "Offline PME site survey tool (local-first)",
+  "icons": []
+}

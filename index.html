@@ -1,0 +1,916 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#111111" />
+  <link rel="manifest" href="manifest.json" />
+  <title>PME Survey</title>
+
+  <style>
+    :root{
+      --bg:#111111;
+      --panel:#1b1b1b;
+      --panel2:#242424;
+      --panel3:#2a2a2a;
+
+      --text:#e6e6e6;
+      --muted:#bdbdbd;
+      --muted2:#9e9e9e;
+
+      --border:#4c4c4c;
+      --border2:#5a5a5a;
+
+      --accentA:#00a3a3;
+      --accentB:#007a7a;
+      --accentBorder:#00bcbc;
+
+      --saveA:#68d391;
+      --saveB:#2f855a;
+      --saveBorder:#68d391;
+
+      --dangerA:#e06a66;
+      --dangerB:#c84a46;
+      --dangerBorder:#e06a66;
+
+      --r:4px;
+      --pad:10px;
+    }
+
+    *{box-sizing:border-box}
+    html, body {height:100%}
+    body{
+      margin:0;
+      font-family: Segoe UI, Roboto, system-ui, -apple-system, Arial, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    header{
+      position:sticky; top:0;
+      z-index:10;
+      background:var(--panel);
+      border-bottom:1px solid var(--border);
+    }
+    .topbar{
+      padding:9px 12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .brand{
+      display:flex;
+      flex-direction:column;
+      line-height:1.1;
+    }
+    .brand b{font-size:16px}
+    .brand small{color:var(--muted2); font-size:12px}
+
+    .kpis{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+    .pill{
+      font-size:12px;
+      padding:4px 8px;
+      border:1px solid var(--border);
+      background:var(--panel2);
+      border-radius:3px;
+      color:var(--muted);
+    }
+
+    .tabs{
+      display:flex;
+      gap:0;
+      padding:0 8px 8px 8px;
+      overflow:auto;
+    }
+    .tab{
+      border:1px solid var(--border);
+      background:var(--panel2);
+      color:var(--text);
+      padding:7px 10px;
+      border-radius:0;
+      font-size:13px;
+      font-weight:600;
+      margin-right:6px;
+      white-space:nowrap;
+    }
+    .tab.active{
+      background:#2f2f2f;
+      border-color:var(--border2);
+      outline:1px solid rgba(255,255,255,.05);
+    }
+
+    main{
+      max-width:1100px;
+      margin:0 auto;
+      padding:12px;
+    }
+
+    .page{display:none}
+    .page.active{display:block}
+
+    .panel{
+      background:var(--panel3);
+      border:1px solid var(--border);
+      border-radius:var(--r);
+      padding:var(--pad);
+      margin-bottom:12px;
+    }
+
+    .panelTitle{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:8px;
+    }
+    .panelTitle b{font-size:16px}
+    .panelTitle small{color:var(--muted); display:block; margin-top:3px}
+
+    .hr{height:1px; background:var(--border); margin:9px 0}
+
+    .row{display:flex; gap:12px; flex-wrap:wrap}
+    .row > *{flex:1 1 240px}
+
+    label{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin-bottom:5px;
+    }
+
+    input, textarea{
+      width:100%;
+      padding:9px 10px;
+      border-radius:var(--r);
+      border:1px solid var(--border);
+      background:var(--panel2);
+      color:var(--text);
+      outline:none;
+    }
+    input:focus, textarea:focus{
+      border-color:#7a7a7a;
+    }
+    input::placeholder{color:#8c8c8c}
+    textarea{min-height:76px; resize:vertical}
+
+    .btnbar{display:flex; gap:8px; flex-wrap:wrap}
+
+    button{
+      cursor:pointer;
+      border-radius:var(--r);
+      border:1px solid var(--border);
+      background:var(--panel2);
+      color:var(--text);
+      padding:9px 11px;
+      font-weight:700;
+      font-size:13px;
+    }
+    .btnPrimary{
+      background:linear-gradient(var(--accentA), var(--accentB));
+      border-color:var(--accentBorder);
+      color:#061414;
+    }
+    .btnGreen{
+      background:linear-gradient(var(--saveA), var(--saveB));
+      border-color:var(--saveBorder);
+      color:#06140d;
+    }
+    .btnDanger{
+      background:linear-gradient(var(--dangerA), var(--dangerB));
+      border-color:var(--dangerBorder);
+      color:#1a0b0b;
+    }
+    .btnSmall{padding:7px 10px; font-weight:700; font-size:13px}
+
+    .toggleGroup{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      padding:8px;
+      border:1px solid var(--border);
+      background:var(--panel2);
+      border-radius:var(--r);
+    }
+    .toggleBtn{
+      padding:7px 9px;
+      border-radius:var(--r);
+      border:1px solid var(--border);
+      background:#2f2f2f;
+      color:var(--muted);
+      font-weight:700;
+      font-size:12px;
+    }
+    .toggleBtn[aria-pressed="true"]{
+      background:#0f3b3b;
+      border-color:var(--accentBorder);
+      color:#eaffff;
+    }
+
+    .list{display:grid; gap:10px; margin-top:10px}
+    details.entry{
+      border:1px solid var(--border);
+      border-radius:var(--r);
+      background:var(--panel2);
+      overflow:hidden;
+    }
+    summary.entrySummary{
+      list-style:none;
+      cursor:pointer;
+      padding:10px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+      border-bottom:1px solid var(--border);
+      background:#2b2b2b;
+    }
+    summary.entrySummary::-webkit-details-marker{display:none}
+    .entryLeft b{display:block; font-size:14px}
+    .entryLeft small{display:block; color:var(--muted2); margin-top:2px}
+
+    .badgeRow{display:flex; gap:6px; flex-wrap:wrap; margin-top:6px}
+    .badge{
+      font-size:11px;
+      padding:3px 6px;
+      border-radius:3px;
+      border:1px solid var(--border);
+      background:#2f2f2f;
+      color:var(--muted);
+    }
+
+    .entryBody{
+      padding:10px;
+      display:grid;
+      gap:8px;
+      background:var(--panel2);
+    }
+    .kv{
+      display:grid;
+      grid-template-columns: 140px 1fr;
+      gap:8px;
+      padding:8px;
+      border:1px solid var(--border);
+      border-radius:var(--r);
+      background:#2a2a2a;
+    }
+    .k{color:var(--muted2); font-size:12px}
+    .v{color:var(--text); font-size:13px; word-break:break-word}
+
+    .thumb{
+      width:100%;
+      max-height:260px;
+      object-fit:cover;
+      border-radius:var(--r);
+      border:1px solid var(--border);
+      background:#1f1f1f;
+    }
+
+    .footer{
+      color:var(--muted2);
+      font-size:12px;
+      padding:6px 2px 0 2px;
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="topbar">
+    <div class="brand">
+      <b>PME Survey</b>
+      <small id="statusText">Local-first • Ready</small>
+    </div>
+    <div class="kpis">
+      <span class="pill" id="offlinePill">Checking…</span>
+      <span class="pill" id="countPill">0 entries</span>
+    </div>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="PME Survey Tabs">
+    <button class="tab active" id="tabSurvey" type="button" data-page="pageSurvey">Survey</button>
+    <button class="tab" id="tabEntries" type="button" data-page="pageEntries">Entries</button>
+  </div>
+</header>
+
+<main>
+  <section class="page active" id="pageSurvey">
+    <div class="panel">
+      <div class="panelTitle">
+        <div>
+          <b>Survey Defaults</b>
+          <small>Set once per site; device entries can reuse them.</small>
+        </div>
+        <div class="btnbar">
+          <button class="btnSmall" id="useLastDefaultsBtn" type="button">Use last defaults</button>
+          <button class="btnSmall btnDanger" id="wipeBtn" type="button">Wipe local data</button>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="row">
+        <div>
+          <label>Site name</label>
+          <input id="siteName" placeholder="e.g. ACME HQ" />
+        </div>
+        <div>
+          <label>Engineer</label>
+          <input id="engineer" placeholder="e.g. Sean" />
+        </div>
+        <div>
+          <label>PME version (default)</label>
+          <input id="pmeVersionDefault" placeholder="e.g. 2023" />
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:10px">
+        <div>
+          <label>Protocol (default)</label>
+          <div class="toggleGroup" id="protocolDefaultGroup">
+            <button class="toggleBtn" data-value="Modbus TCP" type="button">Modbus TCP</button>
+            <button class="toggleBtn" data-value="ION" type="button">ION</button>
+            <button class="toggleBtn" data-value="Modbus RTU" type="button">Modbus RTU</button>
+            <button class="toggleBtn" data-value="BACnet" type="button">BACnet</button>
+            <button class="toggleBtn" data-value="RS-485" type="button">RS-485</button>
+          </div>
+        </div>
+
+        <div>
+          <label>Server type (default)</label>
+          <div class="toggleGroup" id="serverTypeDefaultGroup">
+            <button class="toggleBtn" data-value="Primary" type="button">Primary</button>
+            <button class="toggleBtn" data-value="Secondary" type="button">Secondary</button>
+            <button class="toggleBtn" data-value="Standalone" type="button">Standalone</button>
+          </div>
+        </div>
+
+        <div>
+          <label>&nbsp;</label>
+          <div class="footer">
+            Tip: Install app from the hosted URL once; it’ll work offline after that.
+          </div>
+        </div>
+      </div>
+
+      <div class="btnbar" style="margin-top:10px">
+        <button class="btnPrimary" id="saveDefaultsBtn" type="button">Save defaults</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panelTitle">
+        <div>
+          <b>New Device Entry</b>
+          <small>Fast entry per room/panel. Serial is optional.</small>
+        </div>
+        <div class="btnbar">
+          <button class="btnSmall" id="copyLastBtn" type="button">Copy last entry</button>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="row">
+        <div>
+          <label>Building</label>
+          <input id="building" placeholder="e.g. Building A" />
+        </div>
+        <div>
+          <label>Floor</label>
+          <input id="floor" placeholder="e.g. L2" />
+        </div>
+        <div>
+          <label>Room / Location</label>
+          <input id="room" placeholder="e.g. Switch Room 2" />
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:10px">
+        <div>
+          <label>Panel reference</label>
+          <input id="panelRef" placeholder="e.g. DB-L2-01" />
+        </div>
+        <div>
+          <label>Meter reference (optional)</label>
+          <input id="meterRef" placeholder="e.g. ION9000-01" />
+        </div>
+        <div>
+          <label>Serial number (optional)</label>
+          <input id="serial" placeholder="Optional" />
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:10px">
+        <div>
+          <label>IP address</label>
+          <input id="ip" inputmode="numeric" placeholder="e.g. 10.10.20.15" />
+        </div>
+
+        <div>
+          <label>Protocol</label>
+          <div class="toggleGroup" id="protocolGroup">
+            <button class="toggleBtn" data-value="Use default" type="button">Use default</button>
+            <button class="toggleBtn" data-value="Modbus TCP" type="button">Modbus TCP</button>
+            <button class="toggleBtn" data-value="ION" type="button">ION</button>
+            <button class="toggleBtn" data-value="Modbus RTU" type="button">Modbus RTU</button>
+            <button class="toggleBtn" data-value="BACnet" type="button">BACnet</button>
+            <button class="toggleBtn" data-value="RS-485" type="button">RS-485</button>
+          </div>
+        </div>
+
+        <div>
+          <label>Server type</label>
+          <div class="toggleGroup" id="serverTypeGroup">
+            <button class="toggleBtn" data-value="Use default" type="button">Use default</button>
+            <button class="toggleBtn" data-value="Primary" type="button">Primary</button>
+            <button class="toggleBtn" data-value="Secondary" type="button">Secondary</button>
+            <button class="toggleBtn" data-value="Standalone" type="button">Standalone</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:10px">
+        <div>
+          <label>PME version</label>
+          <input id="pmeVersion" placeholder="Use default or override" />
+        </div>
+        <div>
+          <label>Notes</label>
+          <input id="notes" placeholder="Anything helpful (switch, VLAN, etc.)" />
+        </div>
+        <div>
+          <label>Photo (panel / meter)</label>
+          <input id="photo" type="file" accept="image/*" capture="environment" />
+        </div>
+      </div>
+
+      <div class="btnbar" style="margin-top:10px">
+        <button class="btnGreen" id="saveEntryBtn" type="button">Save entry (local)</button>
+        <button id="clearFormBtn" type="button">Clear form</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="page" id="pageEntries">
+    <div class="panel">
+      <div class="panelTitle">
+        <div>
+          <b>Entries</b>
+          <small>Tap an entry to expand and view all fields.</small>
+        </div>
+        <div class="btnbar">
+          <button class="btnPrimary btnSmall" id="exportCsvBtn" type="button">Export CSV</button>
+        </div>
+      </div>
+      <div class="hr"></div>
+      <div class="list" id="entriesList"></div>
+      <div class="footer">CSV is designed to paste/import into your company asset list later.</div>
+    </div>
+  </section>
+</main>
+
+<script>
+  // Register SW with a RELATIVE path for GitHub Pages
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+
+  const KEY_ENTRIES = 'pmeSurveyEntries_v1';
+  const KEY_DEFAULTS = 'pmeSurveyDefaults_v1';
+  const KEY_LAST_DEFAULTS = 'pmeSurveyLastDefaults_v1';
+
+  const $ = (id) => document.getElementById(id);
+
+  function nowISO(){ return new Date().toISOString(); }
+
+  function loadJSON(key, fallback){
+    try { return JSON.parse(localStorage.getItem(key) || '') ?? fallback; }
+    catch { return fallback; }
+  }
+  function saveJSON(key, value){
+    localStorage.setItem(key, JSON.stringify(value));
+  }
+
+  function setActiveTab(pageId){
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+
+    const page = $(pageId);
+    if(page) page.classList.add('active');
+
+    const tab = document.querySelector(`.tab[data-page="${pageId}"]`);
+    if(tab) tab.classList.add('active');
+
+    window.scrollTo({top: 0, behavior: 'instant'});
+  }
+
+  document.querySelectorAll('.tab').forEach(btn => {
+    btn.addEventListener('click', () => setActiveTab(btn.dataset.page));
+  });
+
+  function offlineUI(){
+    const online = navigator.onLine;
+    $('offlinePill').textContent = online ? 'Online' : 'Offline';
+    $('offlinePill').style.color = online ? '#e6e6e6' : '#ffb3b0';
+    $('statusText').textContent = online ? 'Local-first • Online' : 'Local-first • Offline';
+  }
+  window.addEventListener('online', offlineUI);
+  window.addEventListener('offline', offlineUI);
+
+  function setToggle(groupEl, value){
+    const buttons = [...groupEl.querySelectorAll('button.toggleBtn')];
+    buttons.forEach(b => {
+      const on = b.dataset.value === value;
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    groupEl.dataset.selected = value;
+  }
+  function getToggle(groupEl, fallback){
+    return groupEl.dataset.selected || fallback;
+  }
+  function initToggle(groupId, value){
+    const groupEl = $(groupId);
+    if(!groupEl) return;
+    groupEl.addEventListener('click', (e) => {
+      const btn = e.target.closest('button.toggleBtn');
+      if(!btn) return;
+      setToggle(groupEl, btn.dataset.value);
+    });
+    setToggle(groupEl, value);
+  }
+
+  function getDefaults(){
+    return loadJSON(KEY_DEFAULTS, {
+      siteName: '',
+      engineer: '',
+      pmeVersionDefault: '',
+      protocolDefault: 'Modbus TCP',
+      serverTypeDefault: 'Primary'
+    });
+  }
+  function setDefaults(d){ saveJSON(KEY_DEFAULTS, d); saveJSON(KEY_LAST_DEFAULTS, d); }
+
+  function applyDefaultsToUI(d){
+    $('siteName').value = d.siteName || '';
+    $('engineer').value = d.engineer || '';
+    $('pmeVersionDefault').value = d.pmeVersionDefault || '';
+
+    initToggle('protocolDefaultGroup', d.protocolDefault || 'Modbus TCP');
+    initToggle('serverTypeDefaultGroup', d.serverTypeDefault || 'Primary');
+  }
+
+  function readDefaultsFromUI(){
+    return {
+      siteName: $('siteName').value.trim(),
+      engineer: $('engineer').value.trim(),
+      pmeVersionDefault: $('pmeVersionDefault').value.trim(),
+      protocolDefault: getToggle($('protocolDefaultGroup'), 'Modbus TCP'),
+      serverTypeDefault: getToggle($('serverTypeDefaultGroup'), 'Primary')
+    };
+  }
+
+  function getEntries(){ return loadJSON(KEY_ENTRIES, []); }
+  function setEntries(entries){ saveJSON(KEY_ENTRIES, entries); }
+
+  function setCount(){
+    const n = getEntries().length;
+    $('countPill').textContent = `${n} entr${n===1?'y':'ies'}`;
+  }
+
+  async function fileToDataUrl(file){
+    if(!file) return '';
+    return await new Promise((res, rej)=>{
+      const r = new FileReader();
+      r.onload = () => res(r.result);
+      r.onerror = rej;
+      r.readAsDataURL(file);
+    });
+  }
+
+  function effectiveValue(value, fallback){
+    return (value === 'Use default' || value === '' || value == null) ? fallback : value;
+  }
+
+  function clearForm(){
+    $('building').value = '';
+    $('floor').value = '';
+    $('room').value = '';
+    $('panelRef').value = '';
+    $('meterRef').value = '';
+    $('serial').value = '';
+    $('ip').value = '';
+    $('pmeVersion').value = '';
+    $('notes').value = '';
+    $('photo').value = '';
+
+    setToggle($('protocolGroup'), 'Use default');
+    setToggle($('serverTypeGroup'), 'Use default');
+  }
+
+  function escapeHtml(s){
+    return (s ?? '').toString()
+      .replaceAll('&','&amp;')
+      .replaceAll('<','&lt;')
+      .replaceAll('>','&gt;')
+      .replaceAll('"','&quot;')
+      .replaceAll("'",'&#039;');
+  }
+
+  function lastEntry(){
+    const all = getEntries();
+    return all.length ? all[all.length - 1] : null;
+  }
+
+  function renderEntries(){
+    const entries = getEntries().slice().reverse();
+    const container = $('entriesList');
+    container.innerHTML = '';
+
+    if(entries.length === 0){
+      container.innerHTML = `
+        <details class="entry" open>
+          <summary class="entrySummary">
+            <div class="entryLeft">
+              <b>No entries yet</b>
+              <small>Add a device entry in the Survey tab.</small>
+            </div>
+            <div class="badge">Empty</div>
+          </summary>
+        </details>`;
+      return;
+    }
+
+    entries.forEach((e, idx) => {
+      const badges = [
+        e.protocol ? `<span class="badge">${escapeHtml(e.protocol)}</span>` : '',
+        e.server_type ? `<span class="badge">${escapeHtml(e.server_type)}</span>` : '',
+        e.pme_version ? `<span class="badge">PME ${escapeHtml(e.pme_version)}</span>` : '',
+        e.photo_dataurl ? `<span class="badge">Photo</span>` : ''
+      ].filter(Boolean).join('');
+
+      const summaryTitle = escapeHtml(e.panel_ref || '(no panel ref)');
+      const summaryLoc = escapeHtml([e.building, e.floor, e.room].filter(Boolean).join(' • ') || 'No location');
+      const summaryIP = escapeHtml(e.ip_address || '');
+
+      const wrap = document.createElement('div');
+      wrap.innerHTML = `
+        <details class="entry">
+          <summary class="entrySummary">
+            <div class="entryLeft">
+              <b>${summaryTitle}</b>
+              <small>${summaryLoc}</small>
+              <small>${summaryIP}</small>
+              <div class="badgeRow">${badges}</div>
+            </div>
+            <div class="badge">Expand</div>
+          </summary>
+
+          <div class="entryBody">
+            <div class="kv"><div class="k">Site</div><div class="v">${escapeHtml(e.site_name || '')}</div></div>
+            <div class="kv"><div class="k">Engineer</div><div class="v">${escapeHtml(e.engineer || '')}</div></div>
+            <div class="kv"><div class="k">Created</div><div class="v">${escapeHtml(e.created_at || '')}</div></div>
+
+            <div class="kv"><div class="k">Building</div><div class="v">${escapeHtml(e.building || '')}</div></div>
+            <div class="kv"><div class="k">Floor</div><div class="v">${escapeHtml(e.floor || '')}</div></div>
+            <div class="kv"><div class="k">Room</div><div class="v">${escapeHtml(e.room || '')}</div></div>
+
+            <div class="kv"><div class="k">Panel ref</div><div class="v">${escapeHtml(e.panel_ref || '')}</div></div>
+            <div class="kv"><div class="k">Meter ref</div><div class="v">${escapeHtml(e.meter_ref || '')}</div></div>
+            <div class="kv"><div class="k">Serial</div><div class="v">${escapeHtml(e.serial_number || '')}</div></div>
+
+            <div class="kv"><div class="k">IP</div><div class="v">${escapeHtml(e.ip_address || '')}</div></div>
+            <div class="kv"><div class="k">Protocol</div><div class="v">${escapeHtml(e.protocol || '')}</div></div>
+            <div class="kv"><div class="k">Server type</div><div class="v">${escapeHtml(e.server_type || '')}</div></div>
+            <div class="kv"><div class="k">PME version</div><div class="v">${escapeHtml(e.pme_version || '')}</div></div>
+
+            <div class="kv"><div class="k">Notes</div><div class="v">${escapeHtml(e.notes || '')}</div></div>
+
+            ${e.photo_dataurl ? `<img class="thumb" src="${e.photo_dataurl}" alt="Photo" />` : ''}
+
+            <div class="btnbar" style="justify-content:flex-end">
+              <button class="btnSmall" data-copy="${idx}" type="button">Copy into form</button>
+              <button class="btnSmall btnDanger" data-del="${idx}" type="button">Delete</button>
+            </div>
+          </div>
+        </details>
+      `;
+      container.appendChild(wrap.firstElementChild);
+    });
+
+    container.querySelectorAll('button[data-del]').forEach(btn => {
+      btn.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const revIndex = Number(btn.getAttribute('data-del'));
+        const all = getEntries();
+        const actualIndex = all.length - 1 - revIndex;
+        all.splice(actualIndex, 1);
+        setEntries(all);
+        setCount();
+        renderEntries();
+        $('statusText').textContent = 'Entry deleted';
+      });
+    });
+
+    container.querySelectorAll('button[data-copy]').forEach(btn => {
+      btn.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const revIndex = Number(btn.getAttribute('data-copy'));
+        const all = getEntries();
+        const actualIndex = all.length - 1 - revIndex;
+        const e = all[actualIndex];
+        if(!e) return;
+
+        $('building').value = e.building || '';
+        $('floor').value = e.floor || '';
+        $('room').value = e.room || '';
+        $('panelRef').value = e.panel_ref || '';
+        $('meterRef').value = e.meter_ref || '';
+        $('serial').value = e.serial_number || '';
+        $('ip').value = e.ip_address || '';
+        $('pmeVersion').value = e.pme_version || '';
+        $('notes').value = e.notes || '';
+        $('photo').value = '';
+
+        setToggle($('protocolGroup'), e.protocol || 'Use default');
+        setToggle($('serverTypeGroup'), e.server_type || 'Use default');
+
+        $('statusText').textContent = 'Copied entry into form';
+        setActiveTab('pageSurvey');
+      });
+    });
+  }
+
+  $('saveDefaultsBtn').addEventListener('click', () => {
+    const d = readDefaultsFromUI();
+    setDefaults(d);
+    $('statusText').textContent = 'Defaults saved locally';
+  });
+
+  $('useLastDefaultsBtn').addEventListener('click', () => {
+    const d = loadJSON(KEY_LAST_DEFAULTS, null);
+    if(!d){
+      $('statusText').textContent = 'No last defaults yet';
+      return;
+    }
+    applyDefaultsToUI(d);
+    $('statusText').textContent = 'Loaded last defaults';
+  });
+
+  $('copyLastBtn').addEventListener('click', () => {
+    const e = lastEntry();
+    if(!e){
+      $('statusText').textContent = 'No last entry to copy';
+      return;
+    }
+    $('building').value = e.building || '';
+    $('floor').value = e.floor || '';
+    $('room').value = e.room || '';
+    $('panelRef').value = e.panel_ref || '';
+    $('meterRef').value = e.meter_ref || '';
+    $('serial').value = e.serial_number || '';
+    $('ip').value = e.ip_address || '';
+    $('pmeVersion').value = e.pme_version || '';
+    $('notes').value = e.notes || '';
+    $('photo').value = '';
+
+    setToggle($('protocolGroup'), e.protocol || 'Use default');
+    setToggle($('serverTypeGroup'), e.server_type || 'Use default');
+
+    $('statusText').textContent = 'Copied last entry';
+  });
+
+  $('clearFormBtn').addEventListener('click', () => {
+    clearForm();
+    $('statusText').textContent = 'Form cleared';
+  });
+
+  $('wipeBtn').addEventListener('click', () => {
+    const ok = confirm('Wipe ALL local survey data on this device? This cannot be undone.');
+    if(!ok) return;
+    localStorage.removeItem(KEY_ENTRIES);
+    localStorage.removeItem(KEY_DEFAULTS);
+    localStorage.removeItem(KEY_LAST_DEFAULTS);
+    clearForm();
+    applyDefaultsToUI(getDefaults());
+    setCount();
+    renderEntries();
+    $('statusText').textContent = 'Local data wiped';
+  });
+
+  $('saveEntryBtn').addEventListener('click', async () => {
+    const defaults = getDefaults();
+
+    const protocolSelected = getToggle($('protocolGroup'), 'Use default');
+    const serverSelected = getToggle($('serverTypeGroup'), 'Use default');
+
+    const protocolEff = effectiveValue(protocolSelected, defaults.protocolDefault);
+    const serverEff = effectiveValue(serverSelected, defaults.serverTypeDefault);
+    const pmeEff = $('pmeVersion').value.trim() || defaults.pmeVersionDefault || '';
+
+    const photoFile = $('photo').files[0];
+    const photoDataUrl = await fileToDataUrl(photoFile);
+
+    const entry = {
+      created_at: nowISO(),
+      site_name: defaults.siteName || '',
+      engineer: defaults.engineer || '',
+
+      building: $('building').value.trim(),
+      floor: $('floor').value.trim(),
+      room: $('room').value.trim(),
+
+      panel_ref: $('panelRef').value.trim(),
+      meter_ref: $('meterRef').value.trim(),
+      serial_number: $('serial').value.trim(),
+
+      ip_address: $('ip').value.trim(),
+      protocol: protocolEff,
+      server_type: serverEff,
+      pme_version: pmeEff,
+
+      notes: $('notes').value.trim(),
+      photo_dataurl: photoDataUrl
+    };
+
+    const all = getEntries();
+    all.push(entry);
+    setEntries(all);
+    setCount();
+    renderEntries();
+
+    $('statusText').textContent = 'Entry saved locally';
+
+    $('panelRef').value = '';
+    $('meterRef').value = '';
+    $('serial').value = '';
+    $('ip').value = '';
+    $('notes').value = '';
+    $('photo').value = '';
+  });
+
+  $('exportCsvBtn').addEventListener('click', exportCSV);
+
+  function exportCSV(){
+    const entries = getEntries();
+    const defaults = getDefaults();
+
+    const cols = [
+      'created_at',
+      'site_name',
+      'engineer',
+      'building',
+      'floor',
+      'room',
+      'panel_ref',
+      'meter_ref',
+      'serial_number',
+      'ip_address',
+      'protocol',
+      'server_type',
+      'pme_version',
+      'notes',
+      'photo_attached'
+    ];
+
+    const rows = entries.map(e => ({
+      ...e,
+      photo_attached: e.photo_dataurl ? 'YES' : 'NO'
+    }));
+
+    const csv = [
+      cols.join(','),
+      ...rows.map(r => cols.map(c => `"${String(r[c] ?? '').replaceAll('"','""')}"`).join(','))
+    ].join('\n');
+
+    const safeSite = (defaults.siteName || 'pme-survey')
+      .replaceAll(/[^a-zA-Z0-9_-]+/g,'-')
+      .replaceAll(/-+/g,'-')
+      .replaceAll(/^-|-$/g,'');
+
+    const fileName = `${safeSite || 'pme-survey'}-${new Date().toISOString().slice(0,10)}.csv`;
+
+    const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    a.click();
+    URL.revokeObjectURL(url);
+
+    $('statusText').textContent = `Exported CSV: ${fileName}`;
+  }
+
+  offlineUI();
+  applyDefaultsToUI(getDefaults());
+  initToggle('protocolGroup', 'Use default');
+  initToggle('serverTypeGroup', 'Use default');
+  setCount();
+  renderEntries();
+</script>
+
+</body>
+</html>
