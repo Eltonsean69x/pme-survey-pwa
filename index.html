@@ -462,6 +462,7 @@
         </div>
         <div class="btnbar">
           <button class="btnPrimary btnSmall" id="exportCsvBtn" type="button">Export CSV</button>
+          <button class="btnPrimary btnSmall" id="backupJsonBtn" type="button">Backup Survey</button>
         </div>
       </div>
       <div class="hr"></div>
@@ -910,6 +911,43 @@
   initToggle('serverTypeGroup', 'Use default');
   setCount();
   renderEntries();
+
+  function downloadSurveyBackup() {
+  const backup = {
+    exportedAt: new Date().toISOString(),
+    app: "PME Survey",
+    localStorage: {}
+  };
+
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    backup.localStorage[key] = localStorage.getItem(key);
+  }
+
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const filename = `PME_Survey_Backup_${timestamp}.json`;
+
+  const blob = new Blob([JSON.stringify(backup, null, 2)], {
+    type: "application/json"
+  });
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  link.click();
+
+  URL.revokeObjectURL(url);
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  const backupButton = document.getElementById("backupJsonBtn");
+
+  if (backupButton) {
+    backupButton.addEventListener("click", downloadSurveyBackup);
+  }
+});
+  
 </script>
 
 </body>
