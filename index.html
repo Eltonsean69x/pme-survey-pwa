@@ -304,7 +304,6 @@
         </div>
         <div class="btnbar">
           <button class="btnSmall" id="useLastDefaultsBtn" type="button">Use last defaults</button>
-          <button class="btnSmall btnDanger" id="wipeBtn" type="button">Wipe local data</button>
         </div>
       </div>
 
@@ -468,7 +467,16 @@
       <div class="hr"></div>
       <div class="list" id="entriesList"></div>
       <div class="footer">CSV is designed to paste/import into your company asset list later.</div>
-    </div>
+    <div style="margin-top:30px; padding:16px; border:1px solid #555; border-radius:8px; background:#2b2b2b;">
+  <h3 style="margin-top:0; color:#ff6b6b;">⚠ Danger Zone</h3>
+
+  <p style="opacity:.8;">
+    This permanently deletes every survey entry stored on this device.
+    This action cannot be undone.
+  </p>
+
+  <button class="btnSmall btnDanger" id="wipeBtn" type="button">Wipe Local Data</button>
+</div>
   </section>
 </main>
 
